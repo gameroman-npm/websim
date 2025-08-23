@@ -33,7 +33,7 @@ export interface WebsimComment<
   project_data: null;
 }
 
-export interface CommentsData {
+export interface ProjectsCommentsData {
   comments: {
     data: { comment: WebsimComment; cursor: string }[];
     meta: Meta;

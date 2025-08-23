@@ -8,7 +8,7 @@ export interface ProjectInfo {
   cursor: string;
 }
 
-export interface ProjectsData {
+export interface UsersProjectsData {
   projects: {
     data: ProjectInfo[];
     meta: Meta;

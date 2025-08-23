@@ -25,7 +25,7 @@ interface TopTipper<
   total_tips: number;
 }
 
-export interface StatsData {
+export interface ProjectsStatsData {
   daily_stats: DailyStat[];
   top_referrers: TopReferrer[];
   top_countries: TopCountry[];

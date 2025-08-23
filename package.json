@@ -15,7 +15,10 @@
     "publish": "bun publish"
   },
   "keywords": [
-    "websim"
+    "websim",
+    "api",
+    "types",
+    "typescript"
   ],
   "devDependencies": {
     "@types/bun": "latest"

@@ -1,3 +1,7 @@
+type ChatCompletionsMessage =
+  | { role: "system"; content: string }
+  | { role: "user"; content: string };
+
 interface WebsimUser {
   id: string;
   username: string;
@@ -21,14 +25,20 @@ interface WebsimClientAPI {
     title: string;
     description: string;
   }>;
-  getColorScheme(...args: unknown[]): unknown;
+  getColorScheme(): Promise<"light" | "dark">;
 
-  postComment(...args: unknown[]): unknown;
+  postComment({
+    content,
+    credits,
+  }: {
+    content: string;
+    credits: number;
+  }): Promise<{} | { error: "User has not interacted with the page" }>;
 
   addEventListener(
     eventType: "comment:created",
     callback: (data: any) => void
-  ): unknown;
+  ): () => void;
 
   upload: (file: File) => Promise<string>;
 
@@ -38,9 +48,9 @@ interface WebsimClientAPI {
         messages,
         json,
       }: {
-        messages: Message[];
+        messages: ChatCompletionsMessage[];
         json?: boolean;
-      }) => Promise<Message>;
+      }) => Promise<ChatCompletionsMessage>;
     };
   };
 

@@ -1,42 +1,107 @@
-interface WebsimSocketParty {}
+type Simplify<T> = T extends infer O ? { [K in keyof O]: O[K] } : never;
 
-type KeyValue = { [key: string]: any };
+type KeyValue = Record<string, any>;
+
+interface WebsimSocketParty {
+  /**
+   * Object containing the client ID, avatar URL, and username of this connected client.
+   */
+  client: {
+    id: string;
+    avatarUrl: `https://${string}`;
+    username: string;
+  };
+
+  /**
+   * Object containing all connected peers, including this client.
+   * This is always up-to-date.
+   */
+  peers: {
+    [id: string]: {
+      avatarUrl: `https://${string}`;
+      username: string;
+      id: string;
+      is_anonymous: boolean;
+    };
+  };
+
+  subscribe: (
+    callback: (peers: {
+      [clientId: string]: { avatarUrl: string; username: string };
+    }) => void
+  ) => () => void;
+
+  /**
+   * Object containing the current presence state of all connected peers, including this client.
+   * This is always up-to-date after initialization.
+   */
+  presence: KeyValue;
+
+  /**
+   * Updates the current client's presence state.
+   * @param presence The new presence state to set.
+   */
+  updatePresence<TPresence extends KeyValue>(presence: TPresence): void;
+
+  /**
+   * Subscribe to presence updates from all peers.
+   * @param callback Function to call when presence changes.
+   * @returns Function to unsubscribe.
+   */
+  subscribePresence<TPresence extends KeyValue>(
+    callback: (presence: { [clientId: string]: TPresence }) => void
+  ): () => void;
+
+  /**
+   * Object containing the current room-wide state.
+   * This is always up-to-date.
+   */
+  roomState: KeyValue;
+}
 
 interface CollectionAPI<T extends string> {
   getList: <TData extends KeyValue>() => Promise<
-    (TData & {
-      id: string;
-      $type: T;
-      created_at: string;
-      updated_at: string;
-      user_id: string;
-      username: string;
-    })[]
+    Simplify<
+      TData & {
+        id: string;
+        $type: T;
+        created_at: string;
+        updated_at: string;
+        user_id: string;
+        username: string;
+      }
+    >[]
   >;
   create: <TData extends KeyValue>(
     data: TData
   ) => Promise<
-    TData & {
-      id: string;
-      $type: T;
-      created_at: string;
-      username: string;
-    }
+    Simplify<
+      TData & {
+        id: string;
+        $type: T;
+        created_at: string;
+        username: string;
+      }
+    >
   >;
   update: <T_Id extends string, TData extends KeyValue>(
     id: T_Id,
     data: TData
   ) => Promise<
-    TData & {
-      id: T_Id;
-      $type: T;
-      created_at: string;
-      username: string;
-    }
+    Simplify<
+      TData & {
+        id: T_Id;
+        $type: T;
+        created_at: string;
+        username: string;
+      }
+    >
   >;
   upsert: (data: KeyValue) => Promise<KeyValue>;
   delete: (id: string) => Promise<void>;
-  subscribe: (callback: (records: any[]) => void) => () => void;
+  subscribe: <TRecord extends any = any>(
+    callback: (records: TRecord[]) => void
+  ) => () => void;
   filter: (filters: KeyValue) => CollectionAPI<T>;
 }
 
@@ -66,23 +131,102 @@ declare class WebsimSocket {
 
   dispatchEvent(event: Event | MessageEvent | CloseEvent | ErrorEvent): boolean;
 
+  close(_code?: number, _reason?: string): void;
+  send<TData extends string | object>(data: TData): void;
+
+  collection<T extends string>($type: T): CollectionAPI<T>;
+
+  clientId: string;
+
+  /**
+   * Object containing information about the connected client and their peers.
+   */
+  party: WebsimSocketParty;
+
+  /**
+   * Legacy event handler for changes in connected peers.
+   * @param peers An object with client IDs as keys, each containing the client's avatar URL and username.
+   */
   onPeersChanged:
     | ((peers: {
         [clientId: string]: { avatarUrl: string; username: string };
       }) => any)
     | null;
 
-  close(_code?: number, _reason?: string): void;
-  send(data: string | object): void;
+  /**
+   * Initialize the WebSocket connection.
+   * @returns A promise that resolves when initialization is complete.
+   */
+  initialize(): Promise<void>;
 
-  collection<T extends string>($type: T): CollectionAPI<T>;
+  /**
+   * Request a presence update from a specific client.
+   * @param clientId The ID of the client to request an update from.
+   * @param update The update to request.
+   */
+  requestPresenceUpdate(clientId: string, update: KeyValue): void;
 
-  clientId: string;
+  /**
+   * Subscribe to presence update requests from other clients.
+   * @param callback Function to call when a presence update is requested.
+   * @returns Function to unsubscribe.
+   */
+  subscribePresenceUpdateRequests<TUpdateRequest extends KeyValue>(
+    callback: (updateRequest: TUpdateRequest, fromClientId: string) => void
+  ): () => void;
 
-  party: unknown;
-  peers: unknown;
-  presence: unknown;
-  roomState: unknown;
+  /**
+   * Updates the room-wide state. This merges with existing state.
+   * @param delta The new state to merge with current room state.
+   */
+  updateRoomState<TDelta extends KeyValue>(delta: TDelta): void;
+
+  /**
+   * Subscribe to room state updates.
+   * @param callback Function to call when room state changes.
+   * @returns Function to unsubscribe.
+   */
+  subscribeRoomState<TRoomState extends KeyValue>(
+    callback: (state: TRoomState) => void
+  ): () => void;
+
+  /**
+   * Object containing the current presence state of all connected peers, including this client.
+   * This is always up-to-date after initialization.
+   */
+  presence: { [clientId: string]: KeyValue };
+
+  /**
+   * Object containing the current room-wide state.
+   * This is always up-to-date.
+   */
+  roomState: KeyValue;
+
+  /**
+   * Object containing all connected peers, including this client.
+   * This is always up-to-date.
+   */
+  peers: {
+    [clientId: string]: {
+      avatarUrl: string;
+      username: string;
+    };
+  };
+
+  /**
+   * Updates the current client's presence state.
+   * @param presence The new presence state to set.
+   */
+  updatePresence<TPresence extends KeyValue>(presence: TPresence): void;
+
+  /**
+   * Subscribe to presence updates from all peers.
+   * @param callback Function to call when presence changes.
+   * @returns Function to unsubscribe.
+   */
+  subscribePresence<TPresence extends KeyValue>(
+    callback: (presence: { [clientId: string]: TPresence }) => void
+  ): () => void;
 }
 
 interface Window {

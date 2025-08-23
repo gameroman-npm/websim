@@ -1,12 +1,12 @@
 import { get } from "./api";
 
 import type {
-  ProjectsData,
+  UsersProjectsData,
   FollowersData,
   FollowingData,
   TrendingFeedData,
-  CommentsData,
-  StatsData,
+  ProjectsCommentsData,
+  ProjectsStatsData,
 } from "./types";
 
 const users = {
@@ -21,7 +21,7 @@ const users = {
     }
   ) => {
     const path = `/users/${username}/projects`;
-    return get<ProjectsData>({ path, params });
+    return get<UsersProjectsData>({ path, params });
   },
   /**
    * https://api.websim.com/api/v1/users/${username}/followers
@@ -66,14 +66,14 @@ const projects = {
     }
   ) => {
     const path = `/projects/${projectId}/comments`;
-    return get<CommentsData>({ path, params });
+    return get<ProjectsCommentsData>({ path, params });
   },
   /**
    * https://api.websim.com/api/v1/projects/${projectId}/stats
    */
   getStats: async (projectId: string, params?: {}) => {
     const path = `/projects/${projectId}/stats`;
-    return get<StatsData>({ path, params });
+    return get<ProjectsStatsData>({ path, params });
   },
 } as const;
 
