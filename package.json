@@ -1,6 +1,6 @@
 {
   "name": "websim",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A TypeScript wrapper for Websim.com api",
   "author": "GameRoMan",
   "license": "MIT",
@@ -20,9 +20,6 @@
     "types",
     "typescript"
   ],
-  "devDependencies": {
-    "@types/bun": "latest"
-  },
   "peerDependencies": {
     "typescript": "^5.9.2"
   }

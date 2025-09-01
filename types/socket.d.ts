@@ -1,4 +1,4 @@
-type Simplify<T> = T extends infer O ? { [K in keyof O]: O[K] } : never;
+type Expand<T> = T extends infer O ? { [K in keyof O]: O[K] } : never;
 
 type KeyValue = Record<string, any>;
 
@@ -61,7 +61,7 @@ interface WebsimSocketParty {
 
 interface CollectionAPI<T extends string> {
   getList: <TData extends KeyValue>() => Promise<
-    Simplify<
+    Expand<
       TData & {
         id: string;
         $type: T;
@@ -75,7 +75,7 @@ interface CollectionAPI<T extends string> {
   create: <TData extends KeyValue>(
     data: TData
   ) => Promise<
-    Simplify<
+    Expand<
       TData & {
         id: string;
         $type: T;
@@ -88,7 +88,7 @@ interface CollectionAPI<T extends string> {
     id: T_Id,
     data: TData
   ) => Promise<
-    Simplify<
+    Expand<
       TData & {
         id: T_Id;
         $type: T;
@@ -97,12 +97,51 @@ interface CollectionAPI<T extends string> {
       }
     >
   >;
-  upsert: (data: KeyValue) => Promise<KeyValue>;
+  upsert: <
+    TData extends KeyValue | (KeyValue & { id: T_Id }),
+    T_Id extends string = string
+  >(
+    data: TData
+  ) => Promise<
+    Expand<
+      TData extends { id: T_Id }
+        ? TData &
+            KeyValue & {
+              id: T_Id;
+              $type: T;
+              created_at: string;
+              username: string;
+            }
+        : TData & {
+            id: T_Id;
+            $type: T;
+            created_at: string;
+            username: string;
+          }
+    >
+  >;
   delete: (id: string) => Promise<void>;
-  subscribe: <TRecord extends any = any>(
-    callback: (records: TRecord[]) => void
+  subscribe: (
+    callback: (
+      records: Expand<
+        KeyValue & {
+          id: string;
+          $type: T;
+          created_at: string;
+          updated_at: string;
+          user_id: string;
+          username: string;
+        }
+      >[]
+    ) => void
   ) => () => void;
   filter: (filters: KeyValue) => CollectionAPI<T>;
+}
+
+interface QueryAPI<T extends readonly KeyValue[] = KeyValue[]>
+  extends PromiseLike<T> {
+  getList: () => Promise<T>;
+  subscribe: (callback: (records: T) => void) => () => void;
 }
 
 declare class WebsimSocket {
@@ -133,6 +172,8 @@ declare class WebsimSocket {
 
   close(_code?: number, _reason?: string): void;
   send<TData extends string | object>(data: TData): void;
+
+  query(queryString: string, params?: any[]): QueryAPI;
 
   collection<T extends string>($type: T): CollectionAPI<T>;
 

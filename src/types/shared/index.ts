@@ -6,29 +6,38 @@ export interface Meta {
   end_cursor: string | null;
 }
 
-export interface User<
-  TUserId extends string = string,
-  TUsername extends string = string
-> {
+type Default<T extends D | undefined, D> = T extends D ? T : D;
+type S<T extends string | undefined> = Default<T, string>;
+
+export interface User<T extends { UserId?: string; Username?: string } = {}> {
   _type: "user";
-  id: TUserId;
+  id: S<T["UserId"]>;
   created_at: string;
-  username: TUsername;
+  username: S<T["Username"]>;
   discord_id: string | null;
   discord_username: string | null;
   avatar_url: `https://${string}/${string}` | null;
   is_admin: boolean;
 }
 
-export interface Project<TProjectId extends string = string> {
+export interface Project<
+  T extends {
+    ProjectId?: string;
+    CreatedByUserId?: string;
+    CreatedByUsername?: string;
+  } = {}
+> {
   _type: "project";
-  id: TProjectId;
+  id: S<T["ProjectId"]>;
   created_at: string;
   updated_at: string;
   title: string | null;
   visibility: "public";
   slug: string | null;
-  created_by: User;
+  created_by: User<{
+    UserId: S<T["CreatedByUserId"]>;
+    Username: S<T["CreatedByUsername"]>;
+  }>;
   current_version: number | null;
   last_posted_version: number | null;
   parent_id: string | null;
@@ -44,38 +53,45 @@ export interface Project<TProjectId extends string = string> {
   domains: [{ name: string }] | { name: string }[];
   thumbnail: {
     moderation_state: "ok" | "bad";
-    url: `https://${string}` | null;
+    url: `https://${string}/${string}` | null;
   } | null;
-  video: { url: `https://${string}` } | null;
+  video: { url: `https://${string}/${string}` } | null;
 }
 
 export interface ProjectRevision<
-  TProjectRevisiontId extends string = string,
-  TProjectId extends string = string,
-  TSiteId extends string = string
+  T extends {
+    ProjectId?: string;
+    ProjectRevisionId?: string;
+    SiteId?: string;
+    CreatedByUserId?: string;
+    CreatedByUsername?: string;
+  } = {}
 > {
   _type: "project_revision";
-  id: TProjectRevisiontId;
+  id: S<T["ProjectRevisionId"]>;
   version: number;
   created_at: string;
   visited_at: null;
   parent_id: string | null;
   parent_revision_version: number | null;
   parent_revision_project_id: string | null;
-  created_by: User;
+  created_by: User<{
+    UserId: S<T["CreatedByUserId"]>;
+    Username: S<T["CreatedByUsername"]>;
+  }>;
   meta: { version: string };
-  project_id: TProjectId;
+  project_id: S<T["ProjectId"]>;
   updated_at: string;
   deleted_at: null;
   stats: { multiplayer_count: number };
   draft: boolean;
-  site_id: TSiteId;
+  site_id: S<T["SiteId"]>;
   chat_session_id: null;
   chat_session_run_index: null;
   current_screenshot_url: `https://${string}/${string}` | null;
 }
 
-type PromptType =
+export type PromptType =
   | { type: "plaintext"; text: string }
   | { type: "manual-edit"; text: "" }
   | { type: "refactor"; text: string }
@@ -83,16 +99,16 @@ type PromptType =
   | { type: "get"; text: string }
   | { type: "tweak-edit"; text: ""; data: null };
 
-interface SiteLoreAttachment<TAttachmentId extends string = string> {
-  id: TAttachmentId;
+export interface SiteLoreAttachment<T extends { AttachmentId?: string } = {}> {
+  id: S<T["AttachmentId"]>;
   mediaType: string;
   filename: string;
   description: string;
   useVision: boolean;
 }
 
-type SiteLore = {
-  version: 1 | number;
+export type SiteLore = {
+  version: 1;
   attachments: SiteLoreAttachment[];
   enableApi?: boolean;
   enableMobilePrompt?: boolean;
@@ -104,20 +120,28 @@ type SiteLore = {
   enableComments?: boolean;
 };
 
-export interface Site<TSiteId extends string = string> {
+export interface Site<
+  T extends {
+    SiteId?: string;
+    ProjectId?: string;
+    OwnerUserId?: string;
+    OwnerUsername?: string;
+  } = {},
+  ProjectId extends S<T["ProjectId"]> = S<T["ProjectId"]>
+> {
   _type: "site";
-  id: TSiteId;
+  id: S<T["SiteId"]>;
   parent_id: string | null;
   created_at: string;
-  state: "done" | "generating";
+  state: "initial" | "generating" | "done" | "failed";
   model: string;
   lore: SiteLore | null;
   title: string | null;
   url: string | null;
   prompt: PromptType;
-  owner: User;
-  link_url: string;
-  versioned_link_url: string;
+  owner: User<{ UserId: T["OwnerUserId"]; Username: T["OwnerUsername"] }>;
+  link_url: `/p/${ProjectId}`;
+  versioned_link_url: `/p/${ProjectId}/${number}`;
   deleted_at: string | null;
   yapping: string | null;
 }

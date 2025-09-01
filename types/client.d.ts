@@ -1,18 +1,31 @@
-type ChatCompletionsMessage =
-  | { role: "system"; content: string }
-  | { role: "user"; content: string };
+type ChatCompletionsMessageContent =
+  | { type: "text"; text: string }
+  | { type: "image_url"; image_url: { url: string } };
 
-interface WebsimUser {
+type ChatCompletionsMessage = {
+  role: "assistant" | "user" | "system";
+  content: string | ChatCompletionsMessageContent[];
+};
+
+type AnonymousWebsimUser = {
+  id: "1";
+  username: "anonymous";
+  avatar_url: null;
+};
+
+type WebsimUser = {
   id: string;
   username: string;
-  avatar_url: `https://${string}`;
-}
+  avatar_url: `https://${string}/${string}` | null;
+};
+
+type WebsimUserOrAnonymous = WebsimUser | AnonymousWebsimUser;
 
 interface WebsimClientAPI {
-  getUser(): Promise<WebsimUser>;
+  getUser(): Promise<WebsimUserOrAnonymous>;
   /** Alias for getUser */
-  getCurrentUser(): Promise<WebsimUser>;
-  /**@deprecated Use getBootstrap instead */
+  getCurrentUser(): Promise<WebsimUserOrAnonymous>;
+  /** @deprecated Use getBootstrap instead */
   getDistinctId(): Promise<string>;
   getBootstrap(): Promise<{
     distinct_id: string;
@@ -50,7 +63,7 @@ interface WebsimClientAPI {
       }: {
         messages: ChatCompletionsMessage[];
         json?: boolean;
-      }) => Promise<ChatCompletionsMessage>;
+      }) => Promise<{ role: "assistant"; content: string }>;
     };
   };
 

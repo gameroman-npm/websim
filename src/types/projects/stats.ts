@@ -4,24 +4,27 @@ interface DailyStat {
   engagement_rewards_earned: number;
   offplatform_engagement_rewards_earned: number;
 }
+
 interface TopReferrer {
   referrer: string;
   views: number;
 }
+
 interface TopCountry {
   country: string;
   views: number;
 }
+
 interface PlaytimeStat {
   total_active_dur: number;
   avg_active_dur: number;
 }
-interface TopTipper<
-  TUserId extends string = string,
-  TUsername extends string = string
-> {
-  user_id: TUserId;
-  username: TUsername;
+
+type S<T extends string | undefined> = T extends string ? T : string;
+
+interface TopTipper<T extends { UserId?: string; Username?: string } = {}> {
+  user_id: S<T["UserId"]>;
+  username: S<T["Username"]>;
   total_tips: number;
 }
 
