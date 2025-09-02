@@ -1,6 +1,7 @@
-import type { Site, Project, ProjectRevision } from "../shared";
+import type { WithIncluded } from "../../lib/utils";
+import type { Project, ProjectRevision, Site } from "../../shared";
 
-export interface TrendingFeedProject<
+export type FeedTrendingProject<
   T extends {
     ProjectId?: string;
     ProjectRevisionId?: string;
@@ -8,7 +9,7 @@ export interface TrendingFeedProject<
     CreatedByUserId?: string;
     CreatedByUsername?: string;
   } = {}
-> {
+> = {
   site: Site<
     T & {
       OwnerUserId: T["CreatedByUserId"];
@@ -24,12 +25,11 @@ export interface TrendingFeedProject<
   project_revision: ProjectRevision<T>;
   token: null;
   cursor: string;
-}
+};
 
-export interface TrendingFeedData {
+export type FeedTrendingData = WithIncluded<{
   feed: {
-    data: TrendingFeedProject[];
+    data: FeedTrendingProject[];
     meta: { offset: number; limit: number };
   };
-  included: [];
-}
+}>;

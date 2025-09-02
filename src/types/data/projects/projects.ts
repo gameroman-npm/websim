@@ -1,6 +1,8 @@
-import type { Meta, Project, ProjectRevision, Site } from "../shared";
+import type { WithIncluded } from "../../lib/utils";
+import type { Project, ProjectRevision, Site } from "../../shared";
+import type { Meta } from "../meta";
 
-export interface ProjectInfo<
+export type ProjectInfo<
   T extends {
     ProjectId?: string;
     ProjectRevisionId?: string;
@@ -8,7 +10,7 @@ export interface ProjectInfo<
     CreatedByUserId?: string;
     CreatedByUsername?: string;
   } = {}
-> {
+> = {
   project: Project<T>;
   project_revision: ProjectRevision<T> | null;
   site: Site<
@@ -21,10 +23,11 @@ export interface ProjectInfo<
   cursor: string;
 }
 
-export interface UsersProjectsData {
+export type ProjectData = WithIncluded<ProjectInfo>;
+
+export type ProjectsData = WithIncluded<{
   projects: {
     data: ProjectInfo[];
     meta: Meta;
   };
-  included: [];
-}
+}>;

@@ -1,3 +1,3 @@
 # websim
 
-A TypeScript wrapper for Websim.com api
+A TypeScript wrapper for Websim.com API

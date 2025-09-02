@@ -1,5 +1,2 @@
-export * from "./shared";
-
-export * from "./feed";
-export * from "./projects";
-export * from "./users";
+export type * from "./shared";
+export type * from "./data";

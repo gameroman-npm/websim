@@ -1,12 +1,26 @@
 import { get } from "./api";
 
 import type {
-  UsersProjectsData,
-  FollowersData,
-  FollowingData,
-  TrendingFeedData,
+  FeedTrendingData,
+  FeedPostsData,
+  FeedSearchData,
+
+  // ---
+  ProjectsAssetsData,
+  ProjectsCommentData,
   ProjectsCommentsData,
   ProjectsStatsData,
+  ProjectsScreenshotsData,
+  ProjectsRevisionsData,
+  ProjectData,
+  ProjectsData,
+
+  // ---
+  FollowersData,
+  FollowingData,
+  UsersLikesProjectsData,
+  UserData,
+  UsersStatsData,
 } from "./types";
 
 const feed = {
@@ -20,7 +34,7 @@ const feed = {
     feed?: "hot" | "new" | "top" | "viral" | "recommended";
   }) => {
     const path = `/feed/trending`;
-    return get<TrendingFeedData>({ path, params });
+    return get<FeedTrendingData>({ path, params });
   },
 
   /**
@@ -32,7 +46,7 @@ const feed = {
     sort?: "for_you" | "following" | "latest";
   }) => {
     const path = `/feed/posts`;
-    return get({ path, params });
+    return get<FeedPostsData>({ path, params });
   },
 
   /**
@@ -48,7 +62,7 @@ const feed = {
     }
   ) => {
     const path = `/feed/search/${sort}/${encodeURIComponent(search)}`;
-    return get({ path, params });
+    return get<FeedSearchData>({ path, params });
   },
 } as const;
 
@@ -59,7 +73,7 @@ const project = (projectId: string) => {
      */
     getProject: async (params?: {}) => {
       const path = `/projects/${projectId}`;
-      return get({ path, params });
+      return get<ProjectData>({ path, params });
     },
 
     /**
@@ -77,6 +91,14 @@ const project = (projectId: string) => {
 
     comment: (commentId: string) => ({
       /**
+       * https://api.websim.com/api/v1/projects/${projectId}/comments/${commentId}
+       */
+      getComment: async (params?: {}) => {
+        const path = `/projects/${projectId}/comments/${commentId}`;
+        return get<ProjectsCommentData>({ path, params });
+      },
+
+      /**
        * https://api.websim.com/api/v1/projects/${projectId}/comments/${commentId}/replies
        */
       getReplies: async (params?: {
@@ -84,7 +106,7 @@ const project = (projectId: string) => {
         sort_by?: "best" | "created_at";
       }) => {
         const path = `/projects/${projectId}/comments/${commentId}/replies`;
-        return get({ path, params });
+        return get<ProjectsCommentsData>({ path, params });
       },
     }),
 
@@ -97,11 +119,19 @@ const project = (projectId: string) => {
     },
 
     /**
+     * https://api.websim.com/api/v1/projects/${projectId}/descendants
+     */
+    getDescendants: async (params?: {}) => {
+      const path = `/projects/${projectId}/descendants`;
+      return get<ProjectsData>({ path, params });
+    },
+
+    /**
      * https://api.websim.com/api/v1/projects/${projectId}/revisions
      */
     getRevisions: async (params?: { first?: number }) => {
       const path = `/projects/${projectId}/revisions`;
-      return get({ path, params });
+      return get<ProjectsRevisionsData>({ path, params });
     },
 
     revision: (version: number) => ({
@@ -110,7 +140,7 @@ const project = (projectId: string) => {
        */
       getRevision: async (params?: {}) => {
         const path = `/projects/${projectId}/revisions/${version}`;
-        return get({ path, params });
+        return get<ProjectData>({ path, params });
       },
 
       /**
@@ -118,7 +148,23 @@ const project = (projectId: string) => {
        */
       getAssets: async (params?: {}) => {
         const path = `/projects/${projectId}/revisions/${version}/assets`;
-        return get({ path, params });
+        return get<ProjectsAssetsData>({ path, params });
+      },
+
+      /**
+       * https://api.websim.com/api/v1/projects/${projectId}/revisions/${version}/screenshots
+       */
+      getScreenshots: async (params?: {}) => {
+        const path = `/projects/${projectId}/revisions/${version}/screenshots`;
+        return get<ProjectsScreenshotsData>({ path, params });
+      },
+
+      /**
+       * https://api.websim.com/api/v1/projects/${projectId}/revisions/${version}/html
+       */
+      getHTML: async (params?: {}) => {
+        const path = `/projects/${projectId}/revisions/${version}/html`;
+        return get<string>({ path, params });
       },
     }),
   } as const;
@@ -135,7 +181,7 @@ const projects = {
     posted?: boolean;
   }) => {
     const path = `/projects`;
-    return get({ path, params });
+    return get<ProjectsData>({ path, params });
   },
 
   project,
@@ -155,7 +201,15 @@ const user = (
      */
     getUser: async (params?: { posted?: boolean; first?: number }) => {
       const path = `/users/${userId}`;
-      return get({ path, params });
+      return get<UserData>({ path, params });
+    },
+
+    /**
+     * https://api.websim.com/api/v1/users/${userId}/stats
+     */
+    getStats: async (params?: {}) => {
+      const path = `/users/${userId}/stats`;
+      return get<UsersStatsData>({ path, params });
     },
 
     /**
@@ -163,7 +217,7 @@ const user = (
      */
     getProjects: async (params?: { posted?: boolean; first?: number }) => {
       const path = `/users/${userId}/projects`;
-      return get<UsersProjectsData>({ path, params });
+      return get<ProjectsData>({ path, params });
     },
 
     /**
@@ -187,7 +241,15 @@ const user = (
      */
     getLikedSites: async (params?: { first?: number }) => {
       const path = `/users/${userId}/likes`;
-      return get({ path, params });
+      return get<UsersLikesProjectsData>({ path, params });
+    },
+
+    /**
+     * https://api.websim.com/api/v1/users/${userId}/slugs/${slug}
+     */
+    getProjectBySlug: async (slug: string, params?: {}) => {
+      const path = `/users/${userId}/slugs/${slug}`;
+      return get<ProjectData>({ path, params });
     },
   } as const;
 };

@@ -16,22 +16,29 @@ const buildUrl = (path: string, params?: Params): URL => {
   return url;
 };
 
-export const get = async <T>(options: {
-  path: string;
+type Must<T, This> = unknown extends T ? "❌ MISSING A TYPE PARAM ❌" : This;
+
+export async function get<T>(options: {
+  path: Must<T, string>;
   params?: Params;
-}): Promise<T> => {
+}): Promise<T> {
   const url = buildUrl(options.path, options.params);
   const response = await fetch(url, {
     method: "GET",
-    headers: { "Content-Type": "application/json" },
   });
 
   if (!response.ok) {
     throw new Error(`HTTP ${response.status} - ${response.statusText}`);
   }
 
-  return response.json() as Promise<T>;
-};
+  const contentType = response.headers.get("content-type") ?? "";
+
+  if (contentType.includes("application/json")) {
+    return response.json() as Promise<T>;
+  }
+
+  return response.text() as Promise<T>;
+}
 
 export const post = async <T>(options: {
   path: string;
