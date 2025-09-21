@@ -84,6 +84,7 @@ const project = (projectId: string) => {
       sort_by?: "best" | "created_at";
       sort_order?: "desc" | "asc";
       only_tips?: boolean;
+      after?: string;
     }) => {
       const path = `/projects/${projectId}/comments`;
       return get<ProjectsCommentsData>({ path, params });

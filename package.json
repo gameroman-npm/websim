@@ -1,7 +1,7 @@
 {
   "name": "websim",
   "version": "0.0.4",
-  "description": "A TypeScript wrapper for Websim.com API",
+  "description": "A TypeScript wrapper for the Websim.com API",
   "author": "GameRoMan",
   "license": "MIT",
   "type": "module",
