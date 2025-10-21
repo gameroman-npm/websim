@@ -2,29 +2,28 @@
   "name": "websim",
   "version": "0.0.4",
   "description": "A TypeScript wrapper for the Websim.com API",
+  "type": "module",
   "author": "GameRoMan",
   "license": "MIT",
-  "type": "module",
-  "exports": {
-    ".": {
-      "import": "./src/index.ts"
-    },
-    "./types": {
-      "import": "./src/types/index.ts"
-    }
-  },
-  "files": [
-    "src"
-  ],
-  "scripts": {
-    "npm:publish": "bun publish"
-  },
   "keywords": [
     "websim",
     "api",
     "typescript"
   ],
-  "peerDependencies": {
-    "typescript": "^5.9.2"
+  "scripts": {
+    "build": "bunx tsdown",
+    "npm:publish": "bun publish"
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js",
+    "./types": "./dist/types.js",
+    "./package.json": "./package.json"
+  },
+  "devDependencies": {
+    "tsdown": "^0.15.9",
+    "typescript": "^5.9.3"
   }
 }
