@@ -23,7 +23,7 @@
     "./package.json": "./package.json"
   },
   "devDependencies": {
-    "tsdown": "^0.15.9",
+    "tsdown": "^0.15.12",
     "typescript": "^5.9.3"
   }
 }
