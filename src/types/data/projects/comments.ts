@@ -1,5 +1,5 @@
 import type { S } from "../../lib/utils";
-import type { User } from "../../shared";
+import type { User } from "@websimai/core-api-types";
 import type { Meta } from "../meta";
 
 export type CommentContent =
@@ -30,10 +30,7 @@ export type WebsimComment<
   raw_content: string | null;
   created_at: string;
   deleted: boolean;
-  author: User<{
-    UserId: S<T["AuthorUserId"]>;
-    Username: S<T["AuthorUsername"]>;
-  }>;
+  author: User;
   reply_count: number;
   parent_comment_id: string | null;
   reply_to_data: null;
