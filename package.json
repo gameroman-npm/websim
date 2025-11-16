@@ -1,6 +1,6 @@
 {
   "name": "websim",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "A TypeScript wrapper for the Websim.com API",
   "type": "module",
   "author": "GameRoMan",
