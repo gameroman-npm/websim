@@ -1,5 +1,4 @@
-import type { S } from "../../lib/utils";
-import type { User } from "../../shared";
+import type { User } from "@websimai/core-api-types";
 import type { Meta } from "../meta";
 
 export type CommentContent =
@@ -13,16 +12,9 @@ export type CommentContent =
     }
   | { type: "image"; url: `https://${string}/${string}`; alt: string };
 
-export type WebsimComment<
-  T extends {
-    CommentId?: string;
-    ProjectId?: string;
-    AuthorUserId?: string;
-    AuthorUsername?: string;
-  } = {}
-> = {
-  id: S<T["CommentId"]>;
-  project_id: S<T["ProjectId"]>;
+export type WebsimComment = {
+  id: string;
+  project_id: string;
   content: {
     type: "document";
     children: { type: "paragraph"; children: CommentContent[] }[];
@@ -30,10 +22,7 @@ export type WebsimComment<
   raw_content: string | null;
   created_at: string;
   deleted: boolean;
-  author: User<{
-    UserId: S<T["AuthorUserId"]>;
-    Username: S<T["AuthorUsername"]>;
-  }>;
+  author: User;
   reply_count: number;
   parent_comment_id: string | null;
   reply_to_data: null;

@@ -1,5 +1,4 @@
-import type { WebsimComment } from "../projects/comments";
-import type { ProjectInfo } from "../projects";
+import type { WebsimComment, ProjectInfo } from "../projects";
 
 type FeedPostsDataComment = WebsimComment & {
   author_id: string;

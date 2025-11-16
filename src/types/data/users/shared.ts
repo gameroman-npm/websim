@@ -1,4 +1,4 @@
-import type { User } from "../../shared";
+import type { User } from "@websimai/core-api-types";
 
 export type Follow = {
   readonly created_at: string;
