@@ -1,5 +1,5 @@
-import type { WithIncluded } from "../../lib/utils";
 import type { Project, ProjectRevision, Site } from "@websimai/core-api-types";
+import type { WithIncluded } from "../../lib/utils";
 import type { Meta } from "../meta";
 
 export type ProjectInfo = {

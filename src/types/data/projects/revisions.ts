@@ -1,4 +1,4 @@
-import type { ProjectRevision, Site, Project } from "../../shared";
+import type { ProjectRevision, Site, Project } from "@websimai/core-api-types";
 
 export type ProjectsRevisionsData = {
   revisions: {

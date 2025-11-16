@@ -1,28 +1,15 @@
+import type { Project, ProjectRevision, Site } from "@websimai/core-api-types";
 import type { WithIncluded } from "../../lib/utils";
-import type { Project, ProjectRevision, Site } from "../../shared";
 
-export type FeedTrendingProject<
-  T extends {
-    ProjectId?: string;
-    ProjectRevisionId?: string;
-    SiteId?: string;
-    CreatedByUserId?: string;
-    CreatedByUsername?: string;
-  } = {}
-> = {
-  site: Site<
-    T & {
-      OwnerUserId: T["CreatedByUserId"];
-      OwnerUsername: T["CreatedByUsername"];
-    }
-  >;
+export type FeedTrendingProject = {
+  site: Site;
   likes: number;
   views: number;
   remixes: number;
   comments: number;
   is_multiplayer: boolean;
-  project: Project<T>;
-  project_revision: ProjectRevision<T>;
+  project: Project;
+  project_revision: ProjectRevision;
   token: null;
   cursor: string;
 };

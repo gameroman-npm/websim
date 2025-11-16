@@ -1,5 +1,10 @@
+import type {
+  Project,
+  ProjectRevision,
+  Site,
+  User,
+} from "@websimai/core-api-types";
 import type { Meta } from "../meta";
-import type { Project, ProjectRevision, Site, User } from "../../shared";
 
 export type ProjectLikedInfo = {
   project: Project;
@@ -11,9 +16,9 @@ export type ProjectLikedInfo = {
     created_at: string;
   };
   cursor: string;
-}
+};
 
 export type UsersLikesProjectsData = {
   likes: { data: ProjectLikedInfo[] };
   meta: Meta;
-}
+};

@@ -1,5 +1,3 @@
-import type { S } from "../../lib/utils";
-
 type DailyStat = {
   readonly day: string;
   readonly views: number;
@@ -22,9 +20,9 @@ type PlaytimeStat = {
   readonly avg_active_dur: number;
 };
 
-type TopTipper<T extends { UserId?: string; Username?: string } = {}> = {
-  readonly user_id: S<T["UserId"]>;
-  readonly username: S<T["Username"]>;
+type TopTipper = {
+  readonly user_id: string;
+  readonly username: string;
   readonly total_tips: number;
 };
 

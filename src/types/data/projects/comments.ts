@@ -1,4 +1,3 @@
-import type { S } from "../../lib/utils";
 import type { User } from "@websimai/core-api-types";
 import type { Meta } from "../meta";
 
@@ -13,16 +12,9 @@ export type CommentContent =
     }
   | { type: "image"; url: `https://${string}/${string}`; alt: string };
 
-export type WebsimComment<
-  T extends {
-    CommentId?: string;
-    ProjectId?: string;
-    AuthorUserId?: string;
-    AuthorUsername?: string;
-  } = {}
-> = {
-  id: S<T["CommentId"]>;
-  project_id: S<T["ProjectId"]>;
+export type WebsimComment = {
+  id: string;
+  project_id: string;
   content: {
     type: "document";
     children: { type: "paragraph"; children: CommentContent[] }[];

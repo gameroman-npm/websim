@@ -1,5 +1,5 @@
+import type { Site, Project, ProjectRevision } from "@websimai/core-api-types";
 import type { WithIncluded } from "../../lib/utils";
-import type { Site, Project, ProjectRevision } from "../../shared";
 
 export type FeedSearchProject = {
   readonly site: Site;
